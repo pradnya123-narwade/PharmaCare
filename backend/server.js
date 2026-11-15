@@ -142,6 +142,16 @@ async function startServer() {
     console.log(`=======================================================`);
   });
 
+  server.on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+      console.error(`\n[Server Error] Port ${PORT} is already in use by another running process.`);
+      console.error(`To free port ${PORT} on Windows, run:\n  Stop-Process -Id (Get-NetTCPConnection -LocalPort ${PORT}).OwningProcess -Force\n`);
+    } else {
+      console.error("[Server Error]", err);
+    }
+    process.exit(1);
+  });
+
   // Graceful shutdown handling
   const shutdown = async (signal) => {
     console.log(`\n[Shutdown] Received ${signal}. Closing HTTP server & database connection...`);
