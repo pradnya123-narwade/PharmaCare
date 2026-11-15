@@ -11,7 +11,8 @@ import {
   createMedicine as apiCreateMedicine,
   updateMedicine as apiUpdateMedicine,
   deleteMedicine as apiDeleteMedicine,
-  checkHealth
+  checkHealth,
+  API_BASE_URL
 } from "./services/api";
 
 const STORAGE_KEY = "pharmacare-react-medicines";
@@ -209,6 +210,7 @@ export default function App() {
             onCloseNotification={() => setNotification(null)}
             apiConnected={apiConnected}
             isConnecting={isConnecting}
+            apiUrl={API_BASE_URL}
             onRetryConnection={() => loadMedicinesFromApi(false)}
           />
         }

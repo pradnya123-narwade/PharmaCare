@@ -43,10 +43,20 @@ export default function AppLayout({
   onCloseNotification,
   apiConnected = true,
   isConnecting = false,
+  apiUrl = "",
   onRetryConnection
 }) {
   const location = useLocation();
   const meta = getPageMetadata(location.pathname);
+
+  const isVercel =
+    typeof window !== "undefined" &&
+    (window.location.hostname.includes("vercel.app") ||
+      (!window.location.hostname.includes("localhost") &&
+        !window.location.hostname.includes("127.0.0.1")));
+
+  const isPointingToLocalhost =
+    apiUrl.includes("localhost") || apiUrl.includes("127.0.0.1") || apiUrl === "/api";
 
   return (
     <div className="app-shell">
@@ -104,17 +114,30 @@ export default function AppLayout({
         {!apiConnected && !isConnecting && (
           <div className="api-banner-offline" role="alert">
             <div>
-              ⚠️ <strong>Backend API Unreachable:</strong> Running in local offline mode.
-              Changes are saved to browser storage. Start Express server (<code>npm run dev:backend</code>) to persist to MongoDB.
+              {isVercel && isPointingToLocalhost ? (
+                <>
+                  ⚠️ <strong>Backend URL Not Configured on Vercel:</strong> Your frontend is deployed, but <code>VITE_API_BASE_URL</code> is pointing to localhost (<code>{apiUrl}</code>).
+                  Go to <strong>Vercel Settings → Environment Variables</strong>, set <code>VITE_API_BASE_URL=https://&lt;your-render-backend&gt;.onrender.com/api</code>, and <strong>Redeploy</strong>.
+                </>
+              ) : isVercel ? (
+                <>
+                  ⏳ <strong>Connecting to Render Backend:</strong> Target URL: <code>{apiUrl}</code>. Free Render services sleep when idle and take ~40 seconds to spin up. Click <strong>Retry API Connect</strong> in a few moments.
+                </>
+              ) : (
+                <>
+                  ⚠️ <strong>Backend API Unreachable:</strong> Running in local offline mode (target: <code>{apiUrl}</code>).
+                  Start the Express server (<code>npm run dev:backend</code>) and click <strong>Retry API Connect</strong>.
+                </>
+              )}
             </div>
             {onRetryConnection && (
               <button
                 type="button"
                 className="button button-light"
-                style={{ padding: "4px 12px", fontSize: "12px" }}
+                style={{ padding: "6px 14px", fontSize: "12px", whiteSpace: "nowrap" }}
                 onClick={onRetryConnection}
               >
-                Retry API Connect
+                🔄 Retry API Connect
               </button>
             )}
           </div>

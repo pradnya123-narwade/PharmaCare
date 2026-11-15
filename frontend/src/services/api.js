@@ -130,6 +130,9 @@ export async function getStats() {
  */
 export async function checkHealth() {
   const res = await request("/health", { method: "GET" });
+  if (!res || res.status !== "ok") {
+    throw new Error("Backend did not return a valid health check status.");
+  }
   return res;
 }
 
