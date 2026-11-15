@@ -1,12 +1,16 @@
 import { useNavigate, Link } from "react-router-dom";
 import MedicineForm from "../components/MedicineForm";
 
-export default function AddMedicine({ onSave }) {
+export default function AddMedicine({ onSave, apiConnected }) {
   const navigate = useNavigate();
 
-  function handleSave(values) {
-    onSave(values);
-    navigate("/inventory");
+  async function handleSave(values) {
+    try {
+      await onSave(values);
+      navigate("/inventory");
+    } catch (err) {
+      console.error("Failed to save medicine:", err);
+    }
   }
 
   return (

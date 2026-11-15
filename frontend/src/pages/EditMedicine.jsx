@@ -1,11 +1,11 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
 import MedicineForm from "../components/MedicineForm";
 
-export default function EditMedicine({ medicines, onUpdate }) {
+export default function EditMedicine({ medicines, onUpdate, apiConnected }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const medicine = medicines.find((item) => item.id === id);
+  const medicine = medicines.find((item) => item.id === id || item._id === id);
 
   // Conditional rendering: when medicine ID is not found in inventory
   if (!medicine) {
@@ -25,9 +25,13 @@ export default function EditMedicine({ medicines, onUpdate }) {
     );
   }
 
-  function handleSave(values) {
-    onUpdate(id, values);
-    navigate("/inventory");
+  async function handleSave(values) {
+    try {
+      await onUpdate(id, values);
+      navigate("/inventory");
+    } catch (err) {
+      console.error("Failed to update medicine:", err);
+    }
   }
 
   function handleCancel() {

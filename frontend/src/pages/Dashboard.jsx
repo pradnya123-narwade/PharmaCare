@@ -3,7 +3,7 @@ import StatCard from "../components/StatCard";
 import MedicineTable from "../components/MedicineTable";
 import { formatCurrency } from "../utils/medicine";
 
-export default function Dashboard({ medicines, onEdit, onDelete }) {
+export default function Dashboard({ medicines, onEdit, onDelete, onRefresh, apiConnected }) {
   const totalMedicines = medicines.length;
   const totalUnits = medicines.reduce((sum, item) => sum + Number(item.quantity), 0);
   const lowStockCount = medicines.filter((item) => Number(item.quantity) > 0 && Number(item.quantity) <= 10).length;
@@ -23,6 +23,16 @@ export default function Dashboard({ medicines, onEdit, onDelete }) {
           <p>Real-time monitor of medicine stock levels, availability alerts, and financial valuation.</p>
         </div>
         <div className="heading-actions">
+          {onRefresh && (
+            <button
+              type="button"
+              className="button button-light"
+              onClick={onRefresh}
+              title="Sync latest inventory with database"
+            >
+              🔄 Refresh Data
+            </button>
+          )}
           <Link to="/inventory" className="button button-light">
             View All ({totalMedicines})
           </Link>

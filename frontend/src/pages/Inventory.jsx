@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import MedicineTable from "../components/MedicineTable";
 import ConfirmModal from "../components/ConfirmModal";
 
-export default function Inventory({ medicines, onEdit, onDelete }) {
+export default function Inventory({ medicines, onEdit, onDelete, onRefresh, apiConnected }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All Categories");
   const [stockLevel, setStockLevel] = useState("All Stock Levels");
@@ -85,6 +85,17 @@ export default function Inventory({ medicines, onEdit, onDelete }) {
             <span className="record-count">
               Showing {filteredMedicines.length} of {medicines.length} Medicines
             </span>
+            {onRefresh && (
+              <button
+                type="button"
+                className="button button-light"
+                onClick={onRefresh}
+                title="Sync with database"
+                style={{ padding: "8px 14px" }}
+              >
+                🔄 Sync
+              </button>
+            )}
             <Link to="/add" className="button button-primary">
               + Add Medicine
             </Link>

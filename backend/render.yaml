@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: pharmacare-backend
+    env: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false # Set via Render Dashboard (e.g. MongoDB Atlas connection string)
+      - key: CLIENT_URL
+        sync: false # Set to your deployed Vercel URL, e.g. https://pharmacare-frontend.vercel.app

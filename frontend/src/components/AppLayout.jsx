@@ -38,7 +38,13 @@ function getPageMetadata(pathname) {
   };
 }
 
-export default function AppLayout({ notification, onCloseNotification }) {
+export default function AppLayout({
+  notification,
+  onCloseNotification,
+  apiConnected = true,
+  isConnecting = false,
+  onRetryConnection
+}) {
   const location = useLocation();
   const meta = getPageMetadata(location.pathname);
 
@@ -53,6 +59,31 @@ export default function AppLayout({ notification, onCloseNotification }) {
             <p className="topbar-subtitle">{meta.subtitle}</p>
           </div>
           <div className="profile">
+            {/* Live API / DB Status Indicator */}
+            <div
+              className={`api-status-pill ${
+                isConnecting
+                  ? "loading"
+                  : apiConnected
+                  ? "connected"
+                  : "disconnected"
+              }`}
+              title={
+                apiConnected
+                  ? "Connected to Express.js REST API & Database"
+                  : "Backend disconnected - operating in fallback mode"
+              }
+            >
+              <span className="api-dot" />
+              <span>
+                {isConnecting
+                  ? "Connecting API..."
+                  : apiConnected
+                  ? "API Live (MongoDB)"
+                  : "Offline Mode"}
+              </span>
+            </div>
+
             <div className="profile-date">
               {new Date().toLocaleDateString("en-IN", {
                 weekday: "short",
@@ -69,16 +100,36 @@ export default function AppLayout({ notification, onCloseNotification }) {
           </div>
         </header>
 
+        {/* Informative banner if backend is unreachable */}
+        {!apiConnected && !isConnecting && (
+          <div className="api-banner-offline" role="alert">
+            <div>
+              ⚠️ <strong>Backend API Unreachable:</strong> Running in local offline mode.
+              Changes are saved to browser storage. Start Express server (<code>npm run dev:backend</code>) to persist to MongoDB.
+            </div>
+            {onRetryConnection && (
+              <button
+                type="button"
+                className="button button-light"
+                style={{ padding: "4px 12px", fontSize: "12px" }}
+                onClick={onRetryConnection}
+              >
+                Retry API Connect
+              </button>
+            )}
+          </div>
+        )}
+
         <Toast notification={notification} onClose={onCloseNotification} />
 
         <Outlet />
 
         <footer className="footer">
           <div>
-            <strong>PharmaCare Inventory Management</strong> — Full Stack React Application
+            <strong>PharmaCare Inventory Management</strong> — Full Stack React + Express + Database
           </div>
           <div className="footer-links">
-            <span>Functional Components • Props &amp; State • React Router</span>
+            <span>React Frontend (Vercel) • Express.js REST API &amp; MongoDB (Render) • CORS &amp; .env Configured</span>
           </div>
         </footer>
       </main>
