@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaCare | Inventory Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-mark">P</div>
+            <div>
+                <h2>PharmaCare</h2>
+                <p>Inventory Management</p>
+            </div>
+        </div>
+
+        <p class="menu-label">WORKSPACE</p>
+
+        <nav>
+            <a class="nav-item active" href="#dashboard">
+                <span>01</span> Dashboard
+            </a>
+            <a class="nav-item" href="#inventory">
+                <span>02</span> Medicine Inventory
+            </a>
+            <a class="nav-item" href="#addMedicine">
+                <span>03</span> Add Medicine
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                System operational
+            </div>
+            <p>PHARMACARE SYSTEM</p>
+            <p>Version 1.0.0</p>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <p class="breadcrumb">WORKSPACE / INVENTORY</p>
+                <h1>Pharmacy Dashboard</h1>
+            </div>
+            <div class="top-right">
+                <div class="date-display" id="currentDate"></div>
+                <div class="profile">
+                    <div class="profile-circle">PN</div>
+                    <div>
+                        <strong>Administrator</strong>
+                        <small>Pharmacy Manager</small>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section id="dashboard">
+
+            <div class="welcome-section">
+                <div>
+                    <p class="eyebrow">INVENTORY OVERVIEW</p>
+                    <h2>Medicine Stock Management</h2>
+                    <p>Monitor your pharmacy inventory and manage medicine availability.</p>
+                </div>
+                <button class="primary-btn" onclick="openForm()">
+                    + Add New Medicine
+                </button>
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-heading">
+                        <span>Total Medicines</span>
+                        <span class="stat-symbol blue">01</span>
+                    </div>
+                    <h2 id="totalMedicines">0</h2>
+                    <p>Registered medicine types</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-heading">
+                        <span>Total Units</span>
+                        <span class="stat-symbol purple">02</span>
+                    </div>
+                    <h2 id="totalUnits">0</h2>
+                    <p>Units available in stock</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-heading">
+                        <span>Low Stock</span>
+                        <span class="stat-symbol orange">03</span>
+                    </div>
+                    <h2 id="lowStock">0</h2>
+                    <p>Medicines needing attention</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-heading">
+                        <span>Inventory Value</span>
+                        <span class="stat-symbol green">04</span>
+                    </div>
+                    <h2 id="inventoryValue">₹0</h2>
+                    <p>Total stock purchase value</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="inventory-section" id="inventory">
+
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">STOCK CONTROL</p>
+                    <h2>Medicine Inventory</h2>
+                    <p>View, search, filter and manage your medicine records.</p>
+                </div>
+                <span class="record-count" id="recordCount">0 Records</span>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search medicine name or manufacturer...">
+                </div>
+
+                <select id="categoryFilter">
+                    <option value="All">All Categories</option>
+                    <option value="Tablet">Tablet</option>
+                    <option value="Capsule">Capsule</option>
+                    <option value="Syrup">Syrup</option>
+                    <option value="Injection">Injection</option>
+                    <option value="Ointment">Ointment</option>
+                </select>
+
+                <select id="stockFilter">
+                    <option value="All">All Stock Levels</option>
+                    <option value="Available">Available</option>
+                    <option value="Low">Low Stock</option>
+                    <option value="Out">Out of Stock</option>
+                </select>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>MEDICINE</th>
+                            <th>MEDICINE ID</th>
+                            <th>CATEGORY</th>
+                            <th>PRICE</th>
+                            <th>QUANTITY</th>
+                            <th>EXPIRY DATE</th>
+                            <th>STATUS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medicineTable">
+                    </tbody>
+                </table>
+                <div class="empty-state" id="emptyState" hidden>
+                    <h3>No medicines found</h3>
+                    <p>Try changing your search or filter criteria.</p>
+                </div>
+            </div>
+
+            <div class="table-footer">
+                <span id="tableSummary">Showing 0 medicines</span>
+                <button class="text-btn" onclick="loadMedicines()">
+                    Refresh Inventory
+                </button>
+            </div>
+
+        </section>
+
+        <section class="form-section" id="addMedicine">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">RECORD MANAGEMENT</p>
+                    <h2 id="formHeading">Add New Medicine</h2>
+                    <p>Enter the medicine information below.</p>
+                </div>
+            </div>
+
+            <form id="medicineForm">
+
+                <input type="hidden" id="medicineId">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="medicineName">Medicine Name *</label>
+                        <input type="text" id="medicineName" placeholder="e.g. Paracetamol" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="manufacturer">Manufacturer *</label>
+                        <input type="text" id="manufacturer" placeholder="e.g. Cipla" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <select id="category" required>
+                            <option value="">Select category</option>
+                            <option>Tablet</option>
+                            <option>Capsule</option>
+                            <option>Syrup</option>
+                            <option>Injection</option>
+                            <option>Ointment</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Price per Unit (₹) *</label>
+                        <input type="number" id="price" min="0.01" step="0.01" placeholder="Enter price" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">Available Quantity *</label>
+                        <input type="number" id="quantity" min="0" step="1" placeholder="Enter quantity" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date *</label>
+                        <input type="date" id="expiryDate" required>
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="secondary-btn" onclick="resetForm()">Clear Form</button>
+                    <button type="submit" class="primary-btn" id="submitBtn">
+                        Save Medicine
+                    </button>
+                </div>
+
+                <p id="formMessage" class="form-message"></p>
+
+            </form>
+        </section>
+
+        <footer>
+            <span>PharmaCare Inventory Management System</span>
+            <span>Full Stack Development | Practical 01</span>
+        </footer>
+
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
