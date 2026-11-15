@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import { connectDB } from "./src/config/db.js";
+import { connectDB, getDbDiagnostics } from "./src/config/db.js";
 import medicineRoutes from "./src/routes/medicineRoutes.js";
 import { notFound, errorHandler } from "./src/middleware/errorHandler.js";
 import { Medicine } from "./src/models/Medicine.js";
@@ -95,6 +95,7 @@ app.get("/api/health", (req, res) => {
     3: "disconnecting"
   };
   const dbState = dbStateMap[mongoose.connection.readyState] || "unknown";
+  const diagnostics = getDbDiagnostics();
 
   res.status(200).json({
     status: "ok",
@@ -103,7 +104,10 @@ app.get("/api/health", (req, res) => {
     environment: NODE_ENV,
     database: {
       status: dbState,
-      name: mongoose.connection.name || "pharmacare_db"
+      name: mongoose.connection.name || "pharmacare_db",
+      envVariableSet: diagnostics.isConfiguredInEnv,
+      connectionTarget: diagnostics.targetURI,
+      lastError: dbState === "connected" ? null : diagnostics.lastError
     }
   });
 });
